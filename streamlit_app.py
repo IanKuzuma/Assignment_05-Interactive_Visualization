@@ -120,6 +120,8 @@ col4.metric("Avg Sales/Game", f"{filtered[sales_col].mean():.2f}M units")
 st.divider()
 
 # ── MAIN SCATTER PLOT ────────────────────────────────────────────────────────
+st.markdown(f"#### {score_type} vs {region} Sales by Genre")
+
 fig_scatter = px.scatter(
     filtered,
     x=score_col,
@@ -137,7 +139,6 @@ fig_scatter = px.scatter(
         "Global_Sales": False,
     },
     log_y=True,
-    title=f"{score_type} vs {region} Sales by Genre",
     labels={
         score_col: score_type,
         sales_col: f"{region} Sales (M units)",
@@ -147,18 +148,19 @@ fig_scatter = px.scatter(
 )
 
 fig_scatter.update_layout(
+    title=dict(text=f"{score_type} vs {region} Sales by Genre", x=0.5, xanchor="center"),
     height=550,
     template="plotly_dark",
     paper_bgcolor="#1c1c1c",
     plot_bgcolor="#1c1c1c",
     font=dict(color="#ccccee"),
-    margin=dict(l=60, r=40, t=60, b=50),
+    margin=dict(l=60, r=40, t=80, b=50),
     legend=dict(
         orientation="h",
         yanchor="bottom",
-        y=1.02,
-        xanchor="right",
-        x=1,
+        y=1.0,
+        xanchor="center",
+        x=0.5,
         font=dict(size=11),
     ),
 )
@@ -184,12 +186,12 @@ with left_col:
         x="Sales",
         y="Publisher",
         orientation="h",
-        title=f"Top 10 Publishers by {region} Sales",
         labels={"Sales": f"{region} Sales (M units)"},
         color="Sales",
         color_continuous_scale="Teal",
     )
     fig_pub.update_layout(
+        title=dict(text=f"Top 10 Publishers by {region} Sales", x=0.5, xanchor="center"),
         height=400,
         template="plotly_dark",
         paper_bgcolor="#1c1c1c",
@@ -220,13 +222,13 @@ with right_col:
         x="avg_score",
         y="Genre",
         orientation="h",
-        title=f"Average {score_type} by Genre",
         labels={"avg_score": f"Avg {score_type}", "Genre": "Genre"},
         color="avg_sales",
         color_continuous_scale="Sunset",
         hover_data={"count": True, "avg_sales": ":.2f"},
     )
     fig_genre.update_layout(
+        title=dict(text=f"Average {score_type} by Genre", x=0.5, xanchor="center"),
         height=400,
         template="plotly_dark",
         paper_bgcolor="#1c1c1c",
