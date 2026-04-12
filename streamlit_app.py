@@ -152,6 +152,7 @@ fig_scatter.update_layout(
     paper_bgcolor="#1c1c1c",
     plot_bgcolor="#1c1c1c",
     font=dict(color="#ccccee"),
+    margin=dict(l=60, r=40, t=60, b=50),
     legend=dict(
         orientation="h",
         yanchor="bottom",
@@ -194,6 +195,7 @@ with left_col:
         paper_bgcolor="#1c1c1c",
         plot_bgcolor="#1c1c1c",
         font=dict(color="#ccccee"),
+        margin=dict(l=10, r=30, t=50, b=40),
         showlegend=False,
         coloraxis_showscale=False,
         yaxis=dict(autorange="reversed"),
@@ -230,6 +232,7 @@ with right_col:
         paper_bgcolor="#1c1c1c",
         plot_bgcolor="#1c1c1c",
         font=dict(color="#ccccee"),
+        margin=dict(l=10, r=30, t=50, b=40),
         showlegend=False,
         coloraxis_colorbar=dict(title="Avg Sales (M)"),
         yaxis=dict(autorange="reversed"),
@@ -257,14 +260,16 @@ st.header("Write-Up")
 st.subheader("Question")
 st.markdown(
     """
-    The central question this visualization aims to answer is: **do better-reviewed
-    video games actually sell more, and how does that relationship vary across
-    genres, platforms, regions, and time periods?** On the surface it seems obvious
-    that higher-rated games should sell better, but the reality is more nuanced.
-    Some genres like Sports and Action dominate total sales despite having average
-    review scores, while niche genres like Strategy score well with critics but
-    move far fewer units. This dashboard lets you explore those patterns
-    interactively rather than just seeing a single static snapshot.
+    The question I'm trying to answer with this visualization is: do better-reviewed
+    video games actually sell more, and how does that relationship change depending on
+    the genre, the platform, the region, and the time period? I think it's a genuinely
+    interesting question because on the surface it seems like the answer should
+    obviously be yes, but when you actually look at the data it's way more complicated
+    than that. Some genres like Sports and Action absolutely dominate total sales
+    despite having pretty average review scores, while niche genres like Strategy
+    score really well with critics but barely move units. I wanted to build something
+    that lets you explore those patterns yourself rather than just showing you one
+    static chart and calling it a day.
     """
 )
 
@@ -272,66 +277,70 @@ st.subheader("Design Rationale")
 st.markdown(
     """
     The main visualization is a scatter plot with critic (or user) score on the
-    x-axis and sales on the y-axis, colored by genre. I chose a scatter plot
+    x-axis and sales on the y-axis, colored by genre. I went with a scatter plot
     because the core question is about the relationship between two continuous
-    variables, and scatter plots are the most natural encoding for that. The
-    y-axis uses a log scale because the sales data is extremely right-skewed
-    (a handful of games sell 20M+ units while most sell under 0.5M), and a
-    linear scale would compress the vast majority of data points into a tiny
-    cluster at the bottom. Bubble size encodes global sales to give a sense of
-    each game's overall market impact even when viewing regional sales. Genre
-    is mapped to color because it's the most interesting categorical variable
-    for this question, and Plotly's legend lets you click to isolate individual
-    genres.
+    variables, and honestly there's no better chart type for that. The y-axis uses
+    a log scale because the sales data is extremely right-skewed, a handful of games
+    sell 20M+ units while the vast majority sell under 0.5M, and without the log
+    scale everything just gets compressed into a tiny cluster at the bottom which
+    is completely unreadable. Bubble size encodes global sales so you can still get
+    a sense of each game's overall market impact even when you're looking at regional
+    sales. Genre is mapped to color because it's the most interesting categorical
+    variable for this question, and Plotly's legend conveniently lets you click to
+    isolate individual genres which I think is a really neat interaction.
 
-    For the sidebar filters, I chose a year range slider instead of a single
-    year selector because trends in the score-to-sales relationship are more
-    visible across spans of time than in individual years. The region toggle
-    lets you switch the sales axis between NA, EU, Japan, and Global, which
-    reveals how the same games perform very differently across markets (for
-    example, RPGs dominate Japan but lag in NA). I considered using a dropdown
-    for platforms but there are 31 of them, so I pre-filtered to the top 12 by
-    total sales to keep the control usable.
+    For the sidebar, I chose a year range slider instead of a single year dropdown
+    because trends in the score-to-sales relationship are way more visible across
+    spans of time than in any individual year. The region toggle is probably the most
+    interesting filter, it lets you switch the sales axis between NA, EU, Japan, and
+    Global, and it reveals how the same games perform very differently across markets.
+    For instance RPGs absolutely dominate Japan but lag behind in NA, which you can
+    see immediately when you flip between the two. I considered using a dropdown for
+    platforms but there are 31 of them in the dataset which is way too many, so I
+    pre-filtered to the top 12 by total sales to keep the control usable.
 
-    The two bottom charts are coordinated with the same filters to provide
-    supporting context. The publisher bar chart answers "who's winning in the
-    current view?" and the genre score chart answers "which genres are
-    best-reviewed?" with color encoding average sales as a second dimension.
-    I considered adding a time series line chart as a third view, but decided
-    it would make the dashboard too sprawling, and the year range slider
-    already lets you explore temporal patterns through the scatter plot.
+    The two bottom charts are coordinated with the same sidebar filters to give
+    supporting context. The publisher bar chart answers "who's winning in the current
+    view?" and the genre score chart answers "which genres are best-reviewed?" with
+    the bar color encoding average sales as a second dimension. I considered adding a
+    time series line chart as a third view, but decided it would make the whole
+    dashboard feel too sprawling and unfocused, which is exactly what the assignment
+    told us to avoid. The year range slider already lets you explore temporal patterns
+    through the scatter plot anyway so I felt like it was redundant.
 
-    The dark theme was a deliberate choice to match the gaming aesthetic and
-    reduce visual fatigue during exploration.
+    The dark theme was a deliberate choice because I think it fits the gaming
+    aesthetic and it's just easier on the eyes during extended exploration sessions.
     """
 )
 
 st.subheader("References")
 st.markdown(
     """
-    - **Dataset:** [Video Game Sales with Ratings](https://www.kaggle.com/datasets/rush4ratio/video-game-sales-with-ratings) by Rush Kirubi on Kaggle. The dataset contains ~16,700 video games with sales data from VGChartz and review scores from Metacritic, compiled as of December 2016.
-    - **Tools:** Built with [Streamlit](https://streamlit.io/) and [Plotly Express](https://plotly.com/python/plotly-express/). Deployed via Streamlit Cloud.
-    - **Inspiration:** The Gapminder bubble chart by Hans Rosling influenced the use of a scatter plot with size encoding and interactive year filtering to reveal patterns across multiple dimensions simultaneously.
+    - **Dataset:** [Video Game Sales with Ratings](https://www.kaggle.com/datasets/rush4ratio/video-game-sales-with-ratings) by Rush Kirubi on Kaggle. The dataset contains around 16,700 video games with sales data sourced from VGChartz and review scores from Metacritic, compiled as of December 2016.
+    - **Tools:** Built with [Streamlit](https://streamlit.io/) for the web framework and [Plotly Express](https://plotly.com/python/plotly-express/) for the interactive charts. Deployed via Streamlit Cloud.
     """
 )
 
 st.subheader("Development Process")
 st.markdown(
     """
-    I spent roughly 8 to 10 hours developing this application. The breakdown
-    was approximately 1 to 2 hours on dataset selection and initial
-    exploration, 3 to 4 hours on building and iterating on the Streamlit app
-    (getting the filters, chart layouts, and coordinated views working
-    properly), 2 hours on visual polish and dark theme styling, and 1 to 2
-    hours on writing this documentation and deploying to Streamlit Cloud.
+    I spent roughly 8 to 10 hours developing this application. The breakdown was
+    approximately 1 to 2 hours on dataset selection and initial exploration (I went
+    through a few gaming datasets before settling on this one because it had both
+    critic and user scores alongside regional sales data which is exactly what I
+    needed), 3 to 4 hours on building and iterating on the Streamlit app itself
+    (getting the filters, chart layouts, and coordinated views all working together
+    properly), 2 hours on visual polish and the dark theme styling, and 1 to 2 hours
+    on writing this write-up and deploying to Streamlit Cloud.
 
-    The aspect that took the most time was getting the sidebar filters to work
-    smoothly together without creating confusing empty states. For example,
-    when you filter to a narrow year range and a single genre, sometimes there
-    are very few data points, and the charts need to degrade gracefully rather
-    than breaking. I also spent a lot of time on the scatter plot specifically,
-    tuning the opacity, size scaling, and hover data to make it readable when
-    there are thousands of overlapping points. The log scale on the y-axis was
-    a late decision that dramatically improved readability.
+    The aspect that took the most time was honestly getting the sidebar filters to
+    play nicely together without creating weird empty states. For example when you
+    filter to a really narrow year range and a single niche genre, sometimes there
+    are barely any data points left, and the charts need to handle that gracefully
+    instead of just breaking or showing empty axes. I also spent a lot of time tuning
+    the scatter plot specifically, things like the opacity, the size scaling, and the
+    hover data, because when you have thousands of overlapping points it can get
+    really messy really fast. The log scale on the y-axis was actually a late decision
+    that dramatically improved the readability of the whole thing.
     """
 )
