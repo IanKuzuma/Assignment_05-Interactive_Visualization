@@ -10,7 +10,6 @@ st.set_page_config(
 )
 
 # ===== LOAD & CLEAN DATA =====
-@st.cache_data
 df = pd.read_csv("Video_Games_Sales_as_at_22_Dec_2016.csv")
 df = df.dropna(subset=["Name", "Genre", "Critic_Score", "Global_Sales"])
 df["Year_of_Release"] = df["Year_of_Release"].fillna(0).astype(int)
