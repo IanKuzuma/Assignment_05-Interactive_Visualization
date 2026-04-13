@@ -9,24 +9,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── LOAD & CLEAN DATA ────────────────────────────────────────────────────────
+# ===== LOAD & CLEAN DATA =====
 @st.cache_data
-def load_data():
-    df = pd.read_csv("Video_Games_Sales_as_at_22_Dec_2016.csv")
-    df = df.dropna(subset=["Name", "Genre", "Critic_Score", "Global_Sales"])
-    df["Year_of_Release"] = df["Year_of_Release"].fillna(0).astype(int)
-    df = df[df["Year_of_Release"] > 0]
-    df["User_Score"] = pd.to_numeric(df["User_Score"], errors="coerce")
-    # Normalize user score to 0-100 scale (originally 0-10)
-    df["User_Score_100"] = df["User_Score"] * 10
-    df["Rating"] = df["Rating"].fillna("Unknown")
-    df["Publisher"] = df["Publisher"].fillna("Unknown")
-    df["Developer"] = df["Developer"].fillna("Unknown")
-    return df
+df = pd.read_csv("Video_Games_Sales_as_at_22_Dec_2016.csv")
+df = df.dropna(subset=["Name", "Genre", "Critic_Score", "Global_Sales"])
+df["Year_of_Release"] = df["Year_of_Release"].fillna(0).astype(int)
+df = df[df["Year_of_Release"] > 0]
+df["User_Score"] = pd.to_numeric(df["User_Score"], errors="coerce")
+# Normalize user score to 0-100 scale (originally 0-10)
+df["User_Score_100"] = df["User_Score"] * 10
+df["Rating"] = df["Rating"].fillna("Unknown")
+df["Publisher"] = df["Publisher"].fillna("Unknown")
+df["Developer"] = df["Developer"].fillna("Unknown")
 
-df = load_data()
-
-# ── SIDEBAR FILTERS ──────────────────────────────────────────────────────────
+# ===== SIDEBAR FILTERS =====
 st.sidebar.header("Filters")
 
 # Year range
@@ -91,7 +87,7 @@ score_type = st.sidebar.radio(
 )
 score_col = "Critic_Score" if score_type == "Critic Score" else "User_Score_100"
 
-# ── FILTER DATA ──────────────────────────────────────────────────────────────
+# ===== FILTER DATA =====
 filtered = df[
     (df["Year_of_Release"] >= year_range[0])
     & (df["Year_of_Release"] <= year_range[1])
@@ -103,14 +99,14 @@ filtered = df[
 # Drop rows missing the selected score
 filtered = filtered.dropna(subset=[score_col])
 
-# ── HEADER ───────────────────────────────────────────────────────────────────
-st.title("🎮 What Makes a Hit?")
+# ===== HEADER =====
+st.title("What Makes a Hit?")
 st.markdown(
     "Explore the relationship between critic/user reviews, sales, genres, "
     "and platforms across decades of video game history."
 )
 
-# ── METRICS ──────────────────────────────────────────────────────────────────
+# ===== METRICS =====
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Games Shown", f"{len(filtered):,}")
 col2.metric(f"Avg {score_type}", f"{filtered[score_col].mean():.1f}")
@@ -119,7 +115,7 @@ col4.metric("Avg Sales/Game", f"{filtered[sales_col].mean():.2f}M units")
 
 st.divider()
 
-# ── MAIN SCATTER PLOT ────────────────────────────────────────────────────────
+# ===== MAIN SCATTER PLOT =====
 st.markdown(f"#### {score_type} vs {region} Sales by Genre")
 
 fig_scatter = px.scatter(
@@ -167,7 +163,7 @@ fig_scatter.update_layout(
 
 st.plotly_chart(fig_scatter, use_container_width=True)
 
-# ── BOTTOM SECTION: TWO COORDINATED CHARTS ───────────────────────────────────
+# ===== BOTTOM SECTION: TWO COORDINATED CHARTS =====
 left_col, right_col = st.columns(2)
 
 with left_col:
@@ -241,7 +237,7 @@ with right_col:
     )
     st.plotly_chart(fig_genre, use_container_width=True)
 
-# ── DATA TABLE ───────────────────────────────────────────────────────────────
+# ===== DATA TABLE =====
 with st.expander("Show filtered data"):
     display_cols = [
         "Name", "Platform", "Year_of_Release", "Genre", "Publisher",
@@ -254,7 +250,7 @@ with st.expander("Show filtered data"):
         height=400,
     )
 
-# ── FOOTER ───────────────────────────────────────────────────────────────────
+# ===== WRITE UP =====
 st.divider()
 
 st.header("Write-Up")
