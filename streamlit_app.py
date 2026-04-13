@@ -140,6 +140,7 @@ fig_scatter = px.scatter(
         "Genre": "Genre",
     },
     opacity=0.6,
+    render_mode="svg",
 )
 
 fig_scatter.update_layout(
